@@ -1,5 +1,6 @@
 package github.pair.generator.bean;
 
+import github.pair.generator.util.MathUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,29 @@ public class Fraction {
     public Fraction(int numerator, int denominator) {
         this.numerator = numerator;
         this.denominator = denominator;
+        this.reduce();
+    }
+
+    /**
+     * 取倒数
+     * @return Fraction
+     */
+    public Fraction reciprocal() {
+        if (numerator != 0) {
+            int temp = this.denominator;
+            this.denominator = this.numerator;
+            this.numerator = temp;
+        }
+        return this;
+    }
+
+    // 约简
+    private void reduce() {
+        if (numerator > 0 ) {
+            int gcd = MathUtil.gcd(denominator, numerator);
+            this.numerator /= gcd;
+            this.denominator /= gcd;
+        }
     }
 
     @Override
