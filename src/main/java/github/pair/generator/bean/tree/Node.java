@@ -18,4 +18,17 @@ class Node<T> {
     Node(T data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "data=" + data +
+                ", left=" + left +
+                ", right=" + right +
+                '}';
+    }
+
+    boolean hasChild(){
+        return left != null || right != null;
+    }
 }

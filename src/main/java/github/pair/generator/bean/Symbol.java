@@ -21,4 +21,18 @@ public enum Symbol {
         this.symbol = symbol;
         this.priority = priority;
     }
+
+    @Override
+    public String toString() {
+        return symbol;
+    }
+
+    /**
+     * 比较操作符的优先级
+     * @param symbol  待比较的操作符
+     * @return 比较结果
+     */
+    public boolean priGreaterThan(Symbol symbol) {
+        return this.priority >= symbol.priority;
+    }
 }

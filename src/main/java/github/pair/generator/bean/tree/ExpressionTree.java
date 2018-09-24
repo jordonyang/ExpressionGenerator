@@ -1,7 +1,12 @@
 package github.pair.generator.bean.tree;
 
+import github.pair.generator.bean.Fraction;
 import github.pair.generator.bean.Symbol;
+import github.pair.generator.util.Calculator;
 import github.pair.generator.util.RandomUtil;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Random;
 
 /**
@@ -121,4 +126,96 @@ public class ExpressionTree {
         return operatorCount > 0;
     }
 
+    /**
+     * 中序递归遍历二叉树，根据二叉树结构及操作符优先级添加括号
+     * 生成并记录每一个操作符结点对应的子表达式，同时计算并记录该子表达式对应的结果
+     * @param node 待处理结点
+     * @return 每个结点的遍历结果，包括表达式及计算结果
+     */
+    private TraverseResult inorderTraverse(Node node) {
+        if (node == null)
+            return new TraverseResult("", null);
+
+        if (!node.hasChild()) {
+            // 数据结点
+            return new TraverseResult(node.getData().toString(), (Fraction) node.getData());
+        }
+
+        // 获取左右子表达式及其计算结果
+        TraverseResult leftResult = inorderTraverse(node.getLeft());
+        TraverseResult rightResult = inorderTraverse(node.getRight());
+
+        // 获取父结点的操作符，将之与左右子表达式组合计算得到新的更长的子表达式
+        Node parent = node.getParent();
+        Fraction resultData = Calculator.calculate(node.getData().toString(),
+                leftResult.getData(), rightResult.getData());
+
+        String rawExpression = leftResult.getSubExpression() + " " + node.getData() + " " +
+                rightResult.getSubExpression();
+
+        /*
+         * 如果当前结点操作符为'-'，且得到的左右子表达式计算结果为负数，则对该计算结果取绝对值
+         * 同时将左右表达式位置交换，对于原二叉树中的数据结构则不作处理
+         */
+        if (node.getData() == Symbol.SUBTRACT && resultData.getNumerator() < 0) {
+            resultData = new Fraction(Math.abs(resultData.getNumerator()), resultData.getDenominator());
+            rawExpression = rightResult.getSubExpression() + " " + node.getData() + " " +
+                    leftResult.getSubExpression();
+        }
+
+        TraverseResult finalResult = new TraverseResult();
+        finalResult.setData(resultData);
+
+        // 与父结点操作符的优先级比较，如果比之小或与之同级，则必须加上括号
+        if (parent != null && ((Symbol)parent.getData()).priGreaterThan((Symbol)node.getData())) {
+            finalResult.setSubExpression(Symbol.LEFT_BRACKET + rawExpression + Symbol.RIGHT_BRACKET);
+        }else {
+            finalResult.setSubExpression(rawExpression);
+        }
+
+        return finalResult;
+    }
+
+    /**
+     * 获取完整的表达式字符串
+     * @return 表达式字符串
+     */
+    @Override
+    public String toString() {
+        TraverseResult result = inorderTraverse(root);
+        return result.getSubExpression() + " = " + result.getData();
+    }
+
+    /**
+     * 获取根结点的遍历结果
+     * @return 遍历结果
+     */
+    public TraverseResult getResult() {
+        return inorderTraverse(root);
+    }
+
+    /**
+     * 静态内部类，用于记录每个操作符结点的遍历结果
+     */
+    @Getter
+    @Setter
+    public static class TraverseResult {
+        // 子表达式
+        private String subExpression;
+        // 当前结点的下的左右子树的计算结果
+        private Fraction data;
+
+        private TraverseResult() {
+        }
+
+        private TraverseResult(String subExpression, Fraction data) {
+            this.subExpression = subExpression;
+            this.data = data;
+        }
+
+        @Override
+        public String toString() {
+            return subExpression + " = " + data;
+        }
+    }
 }
