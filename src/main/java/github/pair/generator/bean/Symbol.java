@@ -1,30 +1,36 @@
 package github.pair.generator.bean;
 
+import github.pair.generator.util.Calculator;
 import lombok.Getter;
 
 /**
  * 符号枚举类
  */
-@Getter
 public enum Symbol {
-    PLUS("+", 1),
-    SUBTRACT("-", 1),
-    MULTIPLY("x", 2),
-    DIVIDE("÷", 2),
-    LEFT_BRACKET("(", 3),
-    RIGHT_BRACKET(")", 3);
+    PLUS("+", 1, Calculator.PLUS),
+    SUBTRACT("-", 1, Calculator.SUBTRACT),
+    MULTIPLY("x", 2, Calculator.MUL),
+    DIVIDE("÷", 2, Calculator.DIV),
+    LEFT_BRACKET("(", 3, null),
+    RIGHT_BRACKET(")", 3, null);
 
     private String symbol;
     private int priority;
+    private Calculator calculator;
 
-    Symbol(String symbol, int priority) {
+    Symbol(String symbol, int priority, Calculator calculator) {
         this.symbol = symbol;
         this.priority = priority;
+        this.calculator = calculator;
     }
 
     @Override
     public String toString() {
         return symbol;
+    }
+
+    public Calculator getCalculator() {
+        return calculator;
     }
 
     /**

@@ -1,14 +1,13 @@
 package github.pair.generator.bean;
 
+import github.pair.generator.util.Calculator;
 import github.pair.generator.util.MathUtil;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 分数数据结构
  */
 @Getter
-@Setter
 public class Fraction {
     // 分子
     private int numerator;

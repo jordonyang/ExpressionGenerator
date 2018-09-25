@@ -8,10 +8,9 @@ import java.util.Random;
 
 public class RandomUtil {
 
-    private static final Random numRandom = new Random();
+    private static final Random RANDOM = new Random();
     private static final char[] operators = {'+', '-', 'x', '÷'};
-    private static final Random opRandom = new Random();
-    private static final Map<String, Symbol> symbolMatcher;
+    public static final Map<String, Symbol> symbolMatcher;
 
     static {
         symbolMatcher = new HashMap<>(5, 1);
@@ -22,16 +21,26 @@ public class RandomUtil {
         symbolMatcher.put("-", Symbol.SUBTRACT);
     }
 
+    /**
+     * 随机生成运算符
+     * @return  Symbol
+     */
     public static Symbol generateOperator() {
-        int index = opRandom.nextInt(operators.length);
+        int index = RANDOM.nextInt(operators.length);
         return symbolMatcher.get(String.valueOf(operators[index]));
     }
 
-    public static Fraction generateFraction() {
-        int i = numRandom.nextInt(9);
-        int numerator = numRandom.nextInt(10) + 1;
+    /**
+     * 随机生成分数
+     * @param range 单个数据的范围
+     * @return 分数
+     */
+    public static Fraction generateFraction(int range) {
+        // 控制生成的表达式集中的分数的数量
+        int i = RANDOM.nextInt(7);
+        int numerator = RANDOM.nextInt(range) + 1;
         // 防止分母为0的情况
-        int denominator = numRandom.nextInt(9) + 1;
+        int denominator = RANDOM.nextInt(range - 1) + 1;
 
         if (i == 1) {
             return new Fraction(numerator, denominator);
